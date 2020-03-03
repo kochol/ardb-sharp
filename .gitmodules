@@ -1,0 +1,3 @@
+[submodule "deps/RESPite"]
+	path = deps/RESPite
+	url = https://github.com/kochol/RESPite.git
