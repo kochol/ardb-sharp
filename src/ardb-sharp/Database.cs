@@ -27,6 +27,14 @@ namespace ArdbSharp
 
         public void Dispose() => _connection.Dispose();
 
+        public async ValueTask<object> StringGetAsync(object key)
+        {
+            return await _connection.CallAsync("GET", key);
+        }
 
+        public async ValueTask<object> StringSetAsync(object key, object value)
+        {
+            return await _connection.CallAsync("SET", key, value);
+        }
     }
 }
