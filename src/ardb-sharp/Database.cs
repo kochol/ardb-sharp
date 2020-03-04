@@ -27,6 +27,46 @@ namespace ArdbSharp
 
         public void Dispose() => _connection.Dispose();
 
+        public async ValueTask<object> HashGetAllAsync(object key)
+        {
+            return await _connection.CallAsync("HGETALL", key);
+        }
+
+        public async ValueTask<object> HashSetAsync(object key, object field, object value)
+        {
+            return await _connection.CallAsync("HSET", key, field, value);
+        }
+
+        public async ValueTask<object> KeyDeleteAsync(object key)
+        {
+            return await _connection.CallAsync("DEL", key);
+        }
+
+        public async ValueTask<object> ListLeftPopAsync(object key)
+        {
+            return await _connection.CallAsync("LPOP", key);
+        }
+
+        public async ValueTask<object> ListRightPushAsync(object key, params object[] elements)
+        {
+            return await _connection.CallAsync("RPUSH", key, elements);
+        }
+
+        public async ValueTask<object> SortedSetAddAsync(object key, object member, double score)
+        {
+            return await _connection.CallAsync("ZADD", key, score, member);
+        }
+
+        public async ValueTask<object> SortedSetScanAsync(object key, object cursur)
+        {
+            return await _connection.CallAsync("ZSCAN", key, cursur);
+        }
+
+        public async ValueTask<object> StringAppendAsync(object key, object value)
+        {
+            return await _connection.CallAsync("APPEND", key, value);
+        }
+
         public async ValueTask<object> StringGetAsync(object key)
         {
             return await _connection.CallAsync("GET", key);
