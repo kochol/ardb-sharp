@@ -27,9 +27,24 @@ namespace ArdbSharp
 
         public void Dispose() => _connection.Dispose();
 
+        public async ValueTask<object> HashDeleteAsync(object key, params object[] fields)
+        {
+            return await _connection.CallAsync("HDEL", key, fields);
+        }
+
         public async ValueTask<object> HashGetAllAsync(object key)
         {
             return await _connection.CallAsync("HGETALL", key);
+        }
+
+        public async ValueTask<object> HashGetAsync(object key, object field)
+        {
+            return await _connection.CallAsync("HGETALL", key, field);
+        }
+
+        public async ValueTask<object> HashIncrementAsync(object key, object field, long value)
+        {
+            return await _connection.CallAsync("HINCRBY", key, field, value);
         }
 
         public async ValueTask<object> HashSetAsync(object key, object field, object value)
