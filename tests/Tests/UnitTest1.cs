@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Threading.Tasks;
 using ArdbSharp;
 using NUnit.Framework;
 
@@ -19,12 +20,15 @@ namespace Tests
         }
 
         [Test]
-        public void TestStringGetSet()
+        public async Task TestStringGetSet()
         {
-            var db = _connection.GetDatabase("1");
-            db.StringSetAsync("foo", "bar").GetAwaiter();
-            var bar = db.StringGetAsync("foo").Result;
+            var db = _connection.GetDatabase("0");
+            await db.StringSetAsync("foo", "bar");
+            var bar = await db.StringGetAsync("foo");
             Assert.True(bar.ToString() == "bar");
+
+            var notFound = await db.StringGetAsync("foo2");
+            Assert.True(string.IsNullOrEmpty(notFound.ToString()));
         }
     }
 }
