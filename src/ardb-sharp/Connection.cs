@@ -7,7 +7,7 @@ namespace ArdbSharp
     {
         private readonly ConnectionConfig _config;
 
-        private Dictionary<string, Database> _databases;
+        private readonly Dictionary<string, Database> _databases = new Dictionary<string, Database>();
 
         public Connection(ConnectionConfig config)
         {

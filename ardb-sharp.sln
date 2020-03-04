@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RESPite.Redis", "deps\RESPi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RESPite", "deps\RESPite\src\RESPite\RESPite.csproj", "{23EE15F6-65A5-409B-8850-5A68E618F900}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deps", "Deps", "{EC52F3B7-D0C9-4394-A451-11F4A13659D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "tests\Tests\Tests.csproj", "{028A7B4F-C58D-47E1-9C7D-144440F42935}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,9 +31,17 @@ Global
 		{23EE15F6-65A5-409B-8850-5A68E618F900}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23EE15F6-65A5-409B-8850-5A68E618F900}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23EE15F6-65A5-409B-8850-5A68E618F900}.Release|Any CPU.Build.0 = Release|Any CPU
+		{028A7B4F-C58D-47E1-9C7D-144440F42935}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{028A7B4F-C58D-47E1-9C7D-144440F42935}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{028A7B4F-C58D-47E1-9C7D-144440F42935}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{028A7B4F-C58D-47E1-9C7D-144440F42935}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DCE44BAF-B3BB-4007-BE26-11EF1B9C2D2A} = {EC52F3B7-D0C9-4394-A451-11F4A13659D0}
+		{23EE15F6-65A5-409B-8850-5A68E618F900} = {EC52F3B7-D0C9-4394-A451-11F4A13659D0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5B8EC09E-3029-4A16-AD84-C506E50D5420}
