@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using ArdbSharp;
 using NUnit.Framework;
@@ -29,6 +30,17 @@ namespace Tests
 
             var notFound = await db.Value.StringGetAsync("foo2");
             Assert.True(string.IsNullOrEmpty(notFound.ToString()));
+        }
+
+        [Test]
+        public void FireAndForgetTest()
+        {
+            FireAndForget.MainConnection = _connection;
+            for (int i = 0; i < 20; i++)
+            {
+                FireAndForget.StringAppend("0", "str", i);
+            }
+            Thread.Sleep(1000);
         }
 
         [Test]
