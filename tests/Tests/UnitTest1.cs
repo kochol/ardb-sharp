@@ -22,68 +22,68 @@ namespace Tests
         [Test]
         public async Task TestStringGetSet()
         {
-            var db = _connection.GetDatabase("0");
-            await db.StringSetAsync("foo", "bar");
-            var bar = await db.StringGetAsync("foo");
+            using var db = await _connection.GetDatabaseAsync("0");
+            await db.Value.StringSetAsync("foo", "bar");
+            var bar = await db.Value.StringGetAsync("foo");
             Assert.True(bar.ToString() == "bar");
 
-            var notFound = await db.StringGetAsync("foo2");
+            var notFound = await db.Value.StringGetAsync("foo2");
             Assert.True(string.IsNullOrEmpty(notFound.ToString()));
         }
 
         [Test]
         public async Task SortedSetTest()
         {
-            var db = _connection.GetDatabase("1");
-            await db.SortedSetAddAsync("zset", "two", 2);
-            await db.SortedSetAddAsync("zset", "four", 4);
-            await db.SortedSetAddAsync("zset", "three", 3);
-            await db.SortedSetAddAsync("zset", "one", 1);
-            await db.SortedSetAddAsync("zset", "five", 5);
-            await db.SortedSetAddAsync("zset", "zero", 0);
-            await db.SortedSetAddAsync("zset", "une", 1);
-            await db.SortedSetAddAsync("zset", "tone", 4);
-            await db.SortedSetAddAsync("zset", "waone", 6);
-            await db.SortedSetAddAsync("zset", "ttone", 8);
-            await db.SortedSetAddAsync("zset", "3tone", 9);
-            await db.SortedSetAddAsync("zset", "534one", 7);
-            await db.SortedSetAddAsync("zset", "twdo", 2);
-            await db.SortedSetAddAsync("zset", "foudr", 4);
-            await db.SortedSetAddAsync("zset", "thrdee", 3);
-            await db.SortedSetAddAsync("zset", "oned", 1);
-            await db.SortedSetAddAsync("zset", "fivde", 5);
-            await db.SortedSetAddAsync("zset", "zerdo", 0);
-            await db.SortedSetAddAsync("zset", "uned", 1);
-            await db.SortedSetAddAsync("zset", "tonde", 4);
-            await db.SortedSetAddAsync("zset", "waodne", 6);
-            await db.SortedSetAddAsync("zset", "ttodne", 8);
-            await db.SortedSetAddAsync("zset", "3todne", 9);
-            await db.SortedSetAddAsync("zset", "534done", 7);
-            await db.SortedSetAddAsync("zset", "twro", 2);
-            await db.SortedSetAddAsync("zset", "forur", 4);
-            await db.SortedSetAddAsync("zset", "thrree", 3);
-            await db.SortedSetAddAsync("zset", "onre", 1);
-            await db.SortedSetAddAsync("zset", "firve", 5);
-            await db.SortedSetAddAsync("zset", "zerro", 0);
-            await db.SortedSetAddAsync("zset", "unre", 1);
-            await db.SortedSetAddAsync("zset", "torne", 4);
-            await db.SortedSetAddAsync("zset", "warone", 6);
-            await db.SortedSetAddAsync("zset", "ttrone", 8);
-            await db.SortedSetAddAsync("zset", "3trone", 9);
-            await db.SortedSetAddAsync("zset", "53r4one", 7);
-            await db.SortedSetAddAsync("zset", "twto", 2);
-            await db.SortedSetAddAsync("zset", "fotur", 4);
-            await db.SortedSetAddAsync("zset", "thtree", 3);
-            await db.SortedSetAddAsync("zset", "onte", 1);
-            await db.SortedSetAddAsync("zset", "fitve", 5);
-            await db.SortedSetAddAsync("zset", "zetro", 0);
-            await db.SortedSetAddAsync("zset", "unte", 1);
-            await db.SortedSetAddAsync("zset", "totne", 4);
-            await db.SortedSetAddAsync("zset", "watone", 6);
-            await db.SortedSetAddAsync("zset", "tttone", 8);
-            await db.SortedSetAddAsync("zset", "3ttone", 9);
-            await db.SortedSetAddAsync("zset", "53t4one", 7);
-            var r = await db.SortedSetScanAsync("zset", 0);
+            using var db = await _connection.GetDatabaseAsync("1");
+            await db.Value.SortedSetAddAsync("zset", "two", 2);
+            await db.Value.SortedSetAddAsync("zset", "four", 4);
+            await db.Value.SortedSetAddAsync("zset", "three", 3);
+            await db.Value.SortedSetAddAsync("zset", "one", 1);
+            await db.Value.SortedSetAddAsync("zset", "five", 5);
+            await db.Value.SortedSetAddAsync("zset", "zero", 0);
+            await db.Value.SortedSetAddAsync("zset", "une", 1);
+            await db.Value.SortedSetAddAsync("zset", "tone", 4);
+            await db.Value.SortedSetAddAsync("zset", "waone", 6);
+            await db.Value.SortedSetAddAsync("zset", "ttone", 8);
+            await db.Value.SortedSetAddAsync("zset", "3tone", 9);
+            await db.Value.SortedSetAddAsync("zset", "534one", 7);
+            await db.Value.SortedSetAddAsync("zset", "twdo", 2);
+            await db.Value.SortedSetAddAsync("zset", "foudr", 4);
+            await db.Value.SortedSetAddAsync("zset", "thrdee", 3);
+            await db.Value.SortedSetAddAsync("zset", "oned", 1);
+            await db.Value.SortedSetAddAsync("zset", "fivde", 5);
+            await db.Value.SortedSetAddAsync("zset", "zerdo", 0);
+            await db.Value.SortedSetAddAsync("zset", "uned", 1);
+            await db.Value.SortedSetAddAsync("zset", "tonde", 4);
+            await db.Value.SortedSetAddAsync("zset", "waodne", 6);
+            await db.Value.SortedSetAddAsync("zset", "ttodne", 8);
+            await db.Value.SortedSetAddAsync("zset", "3todne", 9);
+            await db.Value.SortedSetAddAsync("zset", "534done", 7);
+            await db.Value.SortedSetAddAsync("zset", "twro", 2);
+            await db.Value.SortedSetAddAsync("zset", "forur", 4);
+            await db.Value.SortedSetAddAsync("zset", "thrree", 3);
+            await db.Value.SortedSetAddAsync("zset", "onre", 1);
+            await db.Value.SortedSetAddAsync("zset", "firve", 5);
+            await db.Value.SortedSetAddAsync("zset", "zerro", 0);
+            await db.Value.SortedSetAddAsync("zset", "unre", 1);
+            await db.Value.SortedSetAddAsync("zset", "torne", 4);
+            await db.Value.SortedSetAddAsync("zset", "warone", 6);
+            await db.Value.SortedSetAddAsync("zset", "ttrone", 8);
+            await db.Value.SortedSetAddAsync("zset", "3trone", 9);
+            await db.Value.SortedSetAddAsync("zset", "53r4one", 7);
+            await db.Value.SortedSetAddAsync("zset", "twto", 2);
+            await db.Value.SortedSetAddAsync("zset", "fotur", 4);
+            await db.Value.SortedSetAddAsync("zset", "thtree", 3);
+            await db.Value.SortedSetAddAsync("zset", "onte", 1);
+            await db.Value.SortedSetAddAsync("zset", "fitve", 5);
+            await db.Value.SortedSetAddAsync("zset", "zetro", 0);
+            await db.Value.SortedSetAddAsync("zset", "unte", 1);
+            await db.Value.SortedSetAddAsync("zset", "totne", 4);
+            await db.Value.SortedSetAddAsync("zset", "watone", 6);
+            await db.Value.SortedSetAddAsync("zset", "tttone", 8);
+            await db.Value.SortedSetAddAsync("zset", "3ttone", 9);
+            await db.Value.SortedSetAddAsync("zset", "53t4one", 7);
+            var r = await db.Value.SortedSetScanAsync("zset", 0);
 
             Assert.Pass(r.ToString());
         }
