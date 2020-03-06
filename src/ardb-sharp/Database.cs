@@ -96,5 +96,10 @@ namespace ArdbSharp
         {
             return await _connection.CallAsync(cmd, args);
         }
+
+        public static string ToString(object byteArray)
+        {
+            return System.Text.Encoding.UTF8.GetString((byte[])byteArray);
+        }
     }
 }

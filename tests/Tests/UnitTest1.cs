@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ArdbSharp;
@@ -26,10 +27,10 @@ namespace Tests
             using var db = await _connection.GetDatabaseAsync("0");
             await db.Value.StringSetAsync("foo", "bar");
             var bar = await db.Value.StringGetAsync("foo");
-            Assert.True(bar.ToString() == "bar");
+            Assert.True(Database.ToString(bar) == "bar");
 
             var notFound = await db.Value.StringGetAsync("foo2");
-            Assert.True(string.IsNullOrEmpty(notFound.ToString()));
+            Assert.True(notFound == null);
         }
 
         [Test]
@@ -41,6 +42,20 @@ namespace Tests
                 FireAndForget.StringAppend("0", "str", i);
             }
             Thread.Sleep(1000);
+        }
+
+        [Test]
+        public async Task ByteTest()
+        {
+            using var db = await _connection.GetDatabaseAsync("0");
+            int byteCount = 1444000;
+            byte[] bts = new byte[byteCount];
+            for (int i = 0; i < byteCount; i++)
+                bts[i] = (byte)(i % 128);
+            await db.Value.StringSetAsync("bts", bts);
+            byte[] r = (byte[])await db.Value.StringGetAsync("bts");
+            for (int i = 0; i < byteCount; i++)
+                Assert.True(bts[i] == r[i]);
         }
 
         [Test]
