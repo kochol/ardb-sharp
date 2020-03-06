@@ -110,6 +110,9 @@ namespace ArdbSharp
 
         public static string ToString(object byteArray)
         {
+            if (byteArray == null)
+                return null;
+
             if (byteArray is string)
                 return (string)byteArray;
 
@@ -118,11 +121,17 @@ namespace ArdbSharp
 
         public static int ToInt(object byteArray)
         {
+            if (byteArray == null)
+                return 0;
+
             return int.Parse(System.Text.Encoding.UTF8.GetString((byte[])byteArray));
         }
 
         public static long ToLong(object byteArray)
         {
+            if (byteArray == null)
+                return 0;
+
             return long.Parse(System.Text.Encoding.UTF8.GetString((byte[])byteArray));
         }
     }
