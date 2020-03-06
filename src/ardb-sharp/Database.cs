@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Respite.Redis;
@@ -32,9 +33,19 @@ namespace ArdbSharp
             return await _connection.CallAsync("HDEL", key, fields);
         }
 
-        public async ValueTask<object> HashGetAllAsync(object key)
+        public async ValueTask<List<(string Name, object Value)>> HashGetAllAsync(object key)
         {
-            return await _connection.CallAsync("HGETALL", key);
+            var r = await _connection.CallAsync("HGETALL", key);
+            if (r == null)
+                return null;
+
+            var a = (object[])r;
+            var l = new List<(string Name, object Value)>(a.Length / 2);
+            for (int i = 0; i < a.Length; i += 2)
+            {
+                l.Add((Name: Database.ToString(a[i]), Value: a[i + 1]));
+            }
+            return l;
         }
 
         public async ValueTask<object> HashGetAsync(object key, object field)
@@ -99,7 +110,20 @@ namespace ArdbSharp
 
         public static string ToString(object byteArray)
         {
+            if (byteArray is string)
+                return (string)byteArray;
+
             return System.Text.Encoding.UTF8.GetString((byte[])byteArray);
+        }
+
+        public static int ToInt(object byteArray)
+        {
+            return int.Parse(System.Text.Encoding.UTF8.GetString((byte[])byteArray));
+        }
+
+        public static long ToLong(object byteArray)
+        {
+            return long.Parse(System.Text.Encoding.UTF8.GetString((byte[])byteArray));
         }
     }
 }

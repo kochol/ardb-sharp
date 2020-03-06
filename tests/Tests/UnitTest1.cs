@@ -48,7 +48,7 @@ namespace Tests
         public async Task ByteTest()
         {
             using var db = await _connection.GetDatabaseAsync("0");
-            int byteCount = 1444000;
+            int byteCount = 100;
             byte[] bts = new byte[byteCount];
             for (int i = 0; i < byteCount; i++)
                 bts[i] = (byte)(i % 128);
@@ -56,6 +56,21 @@ namespace Tests
             byte[] r = (byte[])await db.Value.StringGetAsync("bts");
             for (int i = 0; i < byteCount; i++)
                 Assert.True(bts[i] == r[i]);
+        }
+
+        [Test]
+        public async Task HashTest()
+        {
+            using var db = await _connection.GetDatabaseAsync("0");
+            int c = 5;
+            for (int i = 0; i < c; i++)
+                await db.Value.HashSetAsync("h1", "f" + i, i);
+            var r = await db.Value.HashGetAllAsync("h1");
+            for (int i = 0; i < c; i++)
+            {
+                Assert.True(r[i].Name == "f" + i);
+                Assert.True(Database.ToInt(r[i].Value) == i);
+            }
         }
 
         [Test]
