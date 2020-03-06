@@ -7,6 +7,17 @@ namespace ArdbSharp
     {
         public static Connection MainConnection;
 
+        private static async Task ExecuteAsync(string databaseName, string cmd, params object[] args)
+        {
+            using var db = await MainConnection.GetDatabaseAsync(databaseName);
+            await db.Value.ExecuteAsync(cmd, args);
+        }
+
+        public static void Execute(string databaseName, string cmd, params object[] args)
+        {
+            Task.Run(() => ExecuteAsync(databaseName, cmd, args));
+        }
+
         private static async Task HashDeleteAsync(string databaseName, object key, params object[] fields)
         {
             using var db = await MainConnection.GetDatabaseAsync(databaseName);

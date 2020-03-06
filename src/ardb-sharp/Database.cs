@@ -91,5 +91,10 @@ namespace ArdbSharp
         {
             return await _connection.CallAsync("SET", key, value);
         }
+
+        public async ValueTask<object> ExecuteAsync(string cmd, params object[] args)
+        {
+            return await _connection.CallAsync(cmd, args);
+        }
     }
 }
