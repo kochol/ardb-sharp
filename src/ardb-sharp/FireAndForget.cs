@@ -7,26 +7,26 @@ namespace ArdbSharp
     {
         public static Connection MainConnection;
 
-        private static async Task ExecuteAsync(string databaseName, string cmd, params object[] args)
+        private static async Task ExecuteAsync(string databaseName, string cmd, object arg)
         {
             using var db = await MainConnection.GetDatabaseAsync(databaseName);
-            await db.Value.ExecuteAsync(cmd, args);
+            await db.Value.ExecuteAsync(cmd, arg);
         }
 
-        public static void Execute(string databaseName, string cmd, params object[] args)
+        public static void Execute(string databaseName, string cmd, object arg)
         {
-            Task.Run(() => ExecuteAsync(databaseName, cmd, args));
+            Task.Run(() => ExecuteAsync(databaseName, cmd, arg));
         }
 
-        private static async Task HashDeleteAsync(string databaseName, object key, params object[] fields)
+        private static async Task HashDeleteAsync(string databaseName, object key, object field)
         {
             using var db = await MainConnection.GetDatabaseAsync(databaseName);
-            await db.Value.HashDeleteAsync(key, fields);
+            await db.Value.HashDeleteAsync(key, field);
         }
 
-        public static void HashDelete(string databaseName, object key, params object[] fields)
+        public static void HashDelete(string databaseName, object key, object field)
         {
-            Task.Run(() => HashDeleteAsync(databaseName, key, fields));
+            Task.Run(() => HashDeleteAsync(databaseName, key, field));
         }
 
         private static async Task HashIncrementAsync(string databaseName, object key, object field, long value)
@@ -62,15 +62,15 @@ namespace ArdbSharp
             Task.Run(() => KeyDeleteAsync(databaseName, key));
         }
 
-        private static async Task ListRightPushAsync(string databaseName, object key, params object[] elements)
+        private static async Task ListRightPushAsync(string databaseName, object key, object value)
         {
             using var db = await MainConnection.GetDatabaseAsync(databaseName);
-            await db.Value.ListRightPushAsync(key, elements);
+            await db.Value.ListRightPushAsync(key, value);
         }
 
-        public static void ListRightPush(string databaseName, object key, params object[] elements)
+        public static void ListRightPush(string databaseName, object key, object value)
         {
-            Task.Run(() => ListRightPushAsync(databaseName, key, elements));
+            Task.Run(() => ListRightPushAsync(databaseName, key, value));
         }
 
         private static async Task SortedSetAddAsync(string databaseName, object key, object member, double score)
