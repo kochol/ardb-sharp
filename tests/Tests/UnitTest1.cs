@@ -40,8 +40,17 @@ namespace Tests
             for (int i = 0; i < 20; i++)
             {
                 FireAndForget.StringAppend("0", "str", i);
+                FireAndForget.ListRightPush("0", "temp", i);
             }
             Thread.Sleep(1000);
+        }
+
+        [Test]
+        public async Task ListTest()
+        {
+            using var db = await _connection.GetDatabaseAsync("0");
+            var r = await db.Value.ListRightPushAsync("temp", 1);
+            Assert.Pass();
         }
 
         [Test]
