@@ -50,7 +50,7 @@ namespace ArdbSharp
 
         public async ValueTask<object> HashGetAsync(object key, object field)
         {
-            return await _connection.CallAsync("HGETALL", key, field);
+            return await _connection.CallAsync("HGET", key, field);
         }
 
         public async ValueTask<object> HashIncrementAsync(object key, object field, long value)
