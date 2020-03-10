@@ -88,6 +88,11 @@ namespace ArdbSharp
             return await _connection.CallAsync("ZSCAN", key, cursur);
         }
 
+        public async ValueTask<object> SortedSetRangeAsync(object key, object start, object end)
+        {
+            return await _connection.CallAsync("ZRANGE", key, start, end);
+        }
+
         public async ValueTask<object> StringAppendAsync(object key, object value)
         {
             return await _connection.CallAsync("APPEND", key, value);

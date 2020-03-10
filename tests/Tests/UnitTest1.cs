@@ -50,6 +50,9 @@ namespace Tests
         {
             using var db = await _connection.GetDatabaseAsync("0");
             var r = await db.Value.ListRightPushAsync("temp", 1);
+            var r2 = await db.Value.ListLeftPopAsync("temp");
+            if (r2 == null)
+                Assert.Fail();
             Assert.Pass();
         }
 
