@@ -23,17 +23,10 @@ namespace ArdbSharp
 
         private static void AddDatabaseToStack(Database db, Connection connection)
         {
-            try
-            {
+            if (connection._databases[db.DatabaseName].Count < 20)
                 connection._databases[db.DatabaseName].Push(db);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-            }
+            else
+                db.Dispose();
         }
 
         private static readonly Action<Database, object?> s_ReturnToDatabasePool =
