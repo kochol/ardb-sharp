@@ -37,7 +37,7 @@ namespace ArdbSharp
 
         private static void AddDatabaseToStack(Database db, Connection connection)
         {
-            if (connection._databases[db.DatabaseName].Count < 20)
+            if (connection._databases[db.DatabaseName].Count < 500)
                 connection._databases[db.DatabaseName].Push(db);
             else
                 db.Dispose();
