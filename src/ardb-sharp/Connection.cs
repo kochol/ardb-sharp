@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -12,18 +14,26 @@ namespace ArdbSharp
     {
         private readonly ConnectionConfig _config;
 
-        private readonly Dictionary<string, Stack<Database>> _databases = new Dictionary<string, Stack<Database>>();
+        private readonly ConcurrentDictionary<string, ConcurrentStack<Database>> _databases = new ConcurrentDictionary<string, ConcurrentStack<Database>>(16, 5);
 
         public Connection(ConnectionConfig config)
         {
             _config = config;
         }
 
-        private static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
-
         private static void AddDatabaseToStack(Database db, Connection connection)
         {
-            connection._databases[db.DatabaseName].Push(db);
+            try
+            {
+                connection._databases[db.DatabaseName].Push(db);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+            }
         }
 
         private static readonly Action<Database, object?> s_ReturnToDatabasePool =
@@ -32,28 +42,34 @@ namespace ArdbSharp
 
         public async ValueTask<Lifetime<Database>> GetDatabaseAsync(string databaseName)
         {
-            await _semaphoreSlim.WaitAsync();
-
             try
             {
                 if (_databases.ContainsKey(databaseName))
                 {
-                    if (_databases[databaseName].Count > 0)
+                    Database db_;
+                    if (_databases[databaseName].TryPop(out db_))
                     {
-                        return new Lifetime<Database>(_databases[databaseName].Pop(), s_ReturnToDatabasePool, this);
+
+                        return new Lifetime<Database>(db_, s_ReturnToDatabasePool, this);
                     }
                 }
                 else
                 {
-                    _databases[databaseName] = new Stack<Database>();
+                    _databases[databaseName] = new ConcurrentStack<Database>();
                 }
 
                 var db = await Database.ConnectAsync(_config.EndPoint, databaseName);
                 return new Lifetime<Database>(db, s_ReturnToDatabasePool, this);
             }
+            catch (Exception e)
+            {
+                if (e is EndOfStreamException)
+                    return await GetDatabaseAsync(databaseName);
+                else
+                    throw e;
+            }
             finally
             {
-                _semaphoreSlim.Release();
             }
         }
     }
