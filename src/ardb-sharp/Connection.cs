@@ -10,7 +10,7 @@ using Respite;
 
 namespace ArdbSharp
 {
-    public class Connection
+    public class Connection: IDisposable
     {
         private readonly ConnectionConfig _config;
 
@@ -19,6 +19,20 @@ namespace ArdbSharp
         public Connection(ConnectionConfig config)
         {
             _config = config;
+        }
+        public void Dispose()
+        {
+            foreach(var s in _databases)
+            {
+                while (s.Value.Count > 0)
+                {
+                    Database db;
+                    if (s.Value.TryPop(out db))
+                    {
+                        db.Dispose();
+                    }
+                }
+            }
         }
 
         private static void AddDatabaseToStack(Database db, Connection connection)
@@ -65,5 +79,6 @@ namespace ArdbSharp
             {
             }
         }
+
     }
 }
