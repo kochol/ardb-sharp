@@ -37,7 +37,7 @@ namespace Tests
         public void FireAndForgetTest()
         {
             FireAndForget.MainConnection = _connection;
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 200; i++)
             {
                 FireAndForget.StringAppend("0", "str", i);
                 FireAndForget.ListRightPush("0", "temp", i);
