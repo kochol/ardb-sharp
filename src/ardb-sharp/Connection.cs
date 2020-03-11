@@ -15,11 +15,14 @@ namespace ArdbSharp
         private readonly ConnectionConfig _config;
 
         private readonly ConcurrentDictionary<string, ConcurrentStack<Database>> _databases = new ConcurrentDictionary<string, ConcurrentStack<Database>>(16, 5);
+        private SemaphoreSlim semaphoreSlim;
 
         public Connection(ConnectionConfig config)
         {
             _config = config;
+            semaphoreSlim = new SemaphoreSlim(config.MaxConnections, config.MaxConnections);
         }
+
         public void Dispose()
         {
             foreach(var s in _databases)
@@ -33,14 +36,17 @@ namespace ArdbSharp
                     }
                 }
             }
+            semaphoreSlim.Dispose();
         }
 
         private static void AddDatabaseToStack(Database db, Connection connection)
         {
-            if (connection._databases[db.DatabaseName].Count < 500)
+            if (connection._databases[db.DatabaseName].Count < connection._config.MaxConnections / 2)
                 connection._databases[db.DatabaseName].Push(db);
             else
                 db.Dispose();
+
+            connection.semaphoreSlim.Release();
         }
 
         private static readonly Action<Database, object?> s_ReturnToDatabasePool =
@@ -49,6 +55,8 @@ namespace ArdbSharp
 
         public async ValueTask<Lifetime<Database>> GetDatabaseAsync(string databaseName)
         {
+            await semaphoreSlim.WaitAsync();
+
             try
             {
                 if (_databases.ContainsKey(databaseName))
