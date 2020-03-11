@@ -55,7 +55,7 @@ namespace ArdbSharp
 
         public async ValueTask<Lifetime<Database>> GetDatabaseAsync(string databaseName)
         {
-            await semaphoreSlim.WaitAsync();
+            await semaphoreSlim.WaitAsync(_config.ConnectionLimitTimeOut);
 
             try
             {
