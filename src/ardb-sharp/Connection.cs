@@ -41,12 +41,19 @@ namespace ArdbSharp
 
         private static void AddDatabaseToStack(Database db, Connection connection)
         {
-            if (connection._databases[db.DatabaseName].Count < connection._config.MaxConnections / 10)
+            if (connection._databases[db.DatabaseName].Count < connection._config.MaxConnections / 4)
                 connection._databases[db.DatabaseName].Push(db);
             else
                 db.Dispose();
 
-            connection.semaphoreSlim.Release();
+            try
+            {
+                connection.semaphoreSlim.Release();
+            }
+            catch
+            {
+
+            }
         }
 
         private static readonly Action<Database, object?> s_ReturnToDatabasePool =
