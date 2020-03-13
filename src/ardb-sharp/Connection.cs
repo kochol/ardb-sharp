@@ -14,7 +14,7 @@ namespace ArdbSharp
     {
         private readonly ConnectionConfig _config;
 
-        private readonly ConcurrentDictionary<string, ConcurrentStack<Database>> _databases = new ConcurrentDictionary<string, ConcurrentStack<Database>>(16, 5);
+        private readonly ConcurrentStack<Database> _databases = new ConcurrentStack<Database>();
         private SemaphoreSlim semaphoreSlim;
 
         public Connection(ConnectionConfig config)
@@ -25,29 +25,23 @@ namespace ArdbSharp
 
         public void Dispose()
         {
-            foreach(var s in _databases)
-            {
-                while (s.Value.Count > 0)
+            while (_databases.Count > 0)
+            {            
+                Database db;
+                if (_databases.TryPop(out db))
                 {
-                    Database db;
-                    if (s.Value.TryPop(out db))
-                    {
-                        db.Dispose();
-                    }
+                    db.Dispose();
                 }
             }
+            
             semaphoreSlim.Dispose();
         }
 
         private static void AddDatabaseToStack(Database db, Connection connection)
         {
-            if (connection._databases[db.DatabaseName].Count < connection._config.MaxConnections / 4)
-                connection._databases[db.DatabaseName].Push(db);
-            else
-                db.Dispose();
-
             try
             {
+                connection._databases.Push(db);
                 connection.semaphoreSlim.Release();
             }
             catch
@@ -62,22 +56,15 @@ namespace ArdbSharp
 
         public async ValueTask<Lifetime<Database>> GetDatabaseAsync(string databaseName)
         {
-            await semaphoreSlim.WaitAsync(_config.ConnectionLimitTimeOut);
-
             try
             {
-                if (_databases.ContainsKey(databaseName))
-                {
-                    Database db_;
-                    if (_databases[databaseName].TryPop(out db_))
-                    {
+                await semaphoreSlim.WaitAsync();
 
-                        return new Lifetime<Database>(db_, s_ReturnToDatabasePool, this);
-                    }
-                }
-                else
+                Database db_;
+                if (_databases.TryPop(out db_))
                 {
-                    _databases[databaseName] = new ConcurrentStack<Database>();
+                    await db_.Select(databaseName);
+                    return new Lifetime<Database>(db_, s_ReturnToDatabasePool, this);
                 }
 
                 var db = await Database.ConnectAsync(_config.EndPoint, databaseName);

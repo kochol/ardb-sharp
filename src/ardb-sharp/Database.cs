@@ -10,7 +10,7 @@ namespace ArdbSharp
     {
         private readonly RedisConnection _connection;
 
-        public string DatabaseName { get; }
+        public string DatabaseName { get; private set; }
 
         private Database(RedisConnection connection, string databaseName)
         {
@@ -76,6 +76,14 @@ namespace ArdbSharp
         public async ValueTask<object> ListRightPushAsync(object key, object value)
         {
             return await _connection.CallAsync("RPUSH", key, value);
+        }
+
+        public async ValueTask<object> Select(string dbName)
+        {
+            if (dbName == DatabaseName)
+                return "OK";
+            DatabaseName = dbName;
+            return await _connection.CallAsync("SELECT", dbName);
         }
 
         public async ValueTask<object> SortedSetAddAsync(object key, object member, double score)
