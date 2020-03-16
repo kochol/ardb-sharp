@@ -6,6 +6,5 @@ namespace ArdbSharp
     {
         public EndPoint EndPoint;
         public int MaxConnections = 1000;
-        public int ConnectionLimitTimeOut = 15000; // 15 seconds
     }
 }
