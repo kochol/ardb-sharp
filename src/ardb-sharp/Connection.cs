@@ -72,6 +72,7 @@ namespace ArdbSharp
             }
             catch (Exception e)
             {
+                semaphoreSlim.Release();
                 if (e is EndOfStreamException)
                     return await GetDatabaseAsync(databaseName);
                 else
