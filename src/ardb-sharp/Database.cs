@@ -117,6 +117,11 @@ namespace ArdbSharp
             return await _connection.CallAsync("GET", key);
         }
 
+        public async ValueTask<long> StringIncr(object key, long by)
+        {
+            return Database.ToLong(await _connection.CallAsync("INCRBY", key, by));
+        }
+
         public async ValueTask<object> StringSetAsync(object key, object value)
         {
             return await _connection.CallAsync("SET", key, value);
