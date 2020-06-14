@@ -109,7 +109,7 @@ namespace ArdbSharp
         public static async ValueTask<object> StringGetAsync(Connection connection, string databaseName, object key)
         {
             using var db = await connection.GetDatabaseAsync(databaseName);
-            return db.Value.StringGetAsync(key);
+            return await db.Value.StringGetAsync(key);
         }
 
         public async ValueTask<object> StringGetAsync(object key)
