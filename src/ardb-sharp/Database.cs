@@ -156,6 +156,9 @@ namespace ArdbSharp
             if (byteArray == null)
                 return 0;
 
+            if (byteArray is long)
+                return (long)byteArray;
+
             return long.Parse(System.Text.Encoding.UTF8.GetString((byte[])byteArray));
         }
     }
