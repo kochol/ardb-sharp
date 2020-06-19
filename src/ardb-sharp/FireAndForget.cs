@@ -106,5 +106,16 @@ namespace ArdbSharp
             Task.Run(() => StringSetAsync(databaseName, key, value));
         }
 
+        private static async Task StringSetAsync(string databaseName, object key, object value, int ExpireSeconds)
+        {
+            using var db = await MainConnection.GetDatabaseAsync(databaseName);
+            await db.Value.StringSetAsync(key, value, ExpireSeconds);
+        }
+
+        public static void StringSet(string databaseName, object key, object value, int ExpireSeconds)
+        {
+            Task.Run(() => StringSetAsync(databaseName, key, value, ExpireSeconds));
+        }
+
     }
 }
