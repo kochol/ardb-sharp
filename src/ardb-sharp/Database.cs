@@ -73,6 +73,16 @@ namespace ArdbSharp
             return await _connection.CallAsync("LPOP", key);
         }
 
+        public async ValueTask<object> ListLenghtAsync(object key)
+        {
+            return await _connection.CallAsync("LLEN", key);
+        }
+
+        public async ValueTask<object[]> ListRangeAsync(object key, long start, long end)
+        {
+            return (object[])(await _connection.CallAsync("LRANGE", key, start, end));
+        }
+        
         public async ValueTask<object> ListRightPushAsync(object key, object value)
         {
             return await _connection.CallAsync("RPUSH", key, value);
