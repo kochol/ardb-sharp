@@ -58,9 +58,25 @@ namespace ArdbSharp
             return await _connection.CallAsync("HINCRBY", key, field, value);
         }
 
-        public async ValueTask<object> HashSetAsync(object key, object field, object value)
+        public async ValueTask<object> HashSetAsync(object key, params object[] fieldsAndValues)
         {
-            return await _connection.CallAsync("HSET", key, field, value);
+            var o = new object[fieldsAndValues.Length + 1];
+            o[0] = key;
+            for (int i = 0; i < fieldsAndValues.Length; i++)
+                o[i + 1] = fieldsAndValues[i];
+            return await _connection.CallAsync("HSET", o);
+        }
+
+        public async ValueTask<HashScan> HashScanAsync(object key, object pattern = null, int pageSize = 10, long cursor = 0L)
+        {
+            return new HashScan(await hashScanAsync(key, pattern, pageSize, cursor));
+        }
+
+        private async ValueTask<object> hashScanAsync(object key, object pattern = null, int pageSize = 10, long cursor = 0L)
+        {
+            if (pattern == null)
+                return await _connection.CallAsync("HSCAN", key, cursor, "COUNT", pageSize);
+            return await _connection.CallAsync("HSCAN", key, cursor, "MATCH", pattern, "COUNT", pageSize);
         }
 
         public async ValueTask<object> KeyDeleteAsync(object key)
@@ -82,10 +98,25 @@ namespace ArdbSharp
         {
             return (object[])(await _connection.CallAsync("LRANGE", key, start, end));
         }
-        
+
+        public async ValueTask<object> ListLeftPushAsync(object key, object value)
+        {
+            return await _connection.CallAsync("LPUSH", key, value);
+        }
+
         public async ValueTask<object> ListRightPushAsync(object key, object value)
         {
             return await _connection.CallAsync("RPUSH", key, value);
+        }
+
+        public async ValueTask<object> ListRemoveAsync(object key, long count, object element)
+        {
+            return await _connection.CallAsync("LREM", key, count, element);
+        }
+
+        public async ValueTask<object> ListTrimAsync(object key, long start, long stop)
+        {
+            return await _connection.CallAsync("LTRIM", key, start, stop);
         }
 
         public async ValueTask<object> Select(string dbName)

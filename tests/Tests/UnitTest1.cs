@@ -11,14 +11,22 @@ namespace Tests
     public class Tests
     {
         private Connection _connection;
+        private FireAndForget _fireAndForget;
+        private RedisInside.Redis _redis;
 
         [SetUp]
         public void Setup()
         {
+            _redis = new RedisInside.Redis();
+
             var config = new ConnectionConfig();
-            config.EndPoint = new IPEndPoint(IPAddress.Loopback, 16379);
+            config.EndPoint = _redis.Endpoint;
+            config.MaxConnections = 100;
 
             _connection = new Connection(config);
+            
+            _fireAndForget = new FireAndForget();
+            _fireAndForget.MainConnection = _connection;
         }
 
         [Test]
@@ -36,11 +44,11 @@ namespace Tests
         [Test]
         public void FireAndForgetTest()
         {
-            FireAndForget.MainConnection = _connection;
+            _fireAndForget.MainConnection = _connection;
             for (int i = 0; i < 200; i++)
             {
-                FireAndForget.StringAppend("0", "str", i);
-                FireAndForget.ListRightPush("0", "temp", i);
+                _fireAndForget.StringAppend("0", "str", i);
+                _fireAndForget.ListRightPush("0", "temp", i);
             }
             Thread.Sleep(1000);
         }
@@ -140,6 +148,25 @@ namespace Tests
             var r = await db.Value.SortedSetScanAsync("zset", 0);
 
             Assert.Pass(r.ToString());
+        }
+
+        [Test]
+        public async Task HashScanTestAsync()
+        {
+            using var db = await _connection.GetDatabaseAsync("1");
+            int count = 25;
+            for (int i = 0; i < count; i++)
+                await db.Value.HashSetAsync("hash", "b" + i, i);
+
+            var hs = await db.Value.HashScanAsync("hash", "b*");
+
+            Assert.AreEqual(hs.Entries.Length, count);
+
+            for (int i = 0; i < hs.Entries.Length; i++)
+            {
+                Assert.AreEqual(hs.Entries[i].Name, "b" + i);
+                Assert.AreEqual(Database.ToLong(hs.Entries[i].Value), i);
+            }
         }
     }
 }

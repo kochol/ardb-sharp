@@ -2,9 +2,9 @@
 
 namespace ArdbSharp
 {
-    public class ConnectionConfig
+    public struct ConnectionConfig
     {
         public EndPoint EndPoint;
-        public int MaxConnections = 1000;
+        public int MaxConnections;
     }
 }
