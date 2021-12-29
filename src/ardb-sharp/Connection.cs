@@ -17,6 +17,10 @@ namespace ArdbSharp
         private readonly ConcurrentStack<Database> _databases = new ConcurrentStack<Database>();
         private SemaphoreSlim semaphoreSlim;
 
+        private long _count;
+
+        public long Count => Interlocked.Read(ref _count);
+
         public Connection(ConnectionConfig config)
         {
             _config = config;
@@ -67,6 +71,7 @@ namespace ArdbSharp
                     return new Lifetime<Database>(db_, s_ReturnToDatabasePool, this);
                 }
 
+                Interlocked.Increment(ref _count);
                 var db = await Database.ConnectAsync(_config.EndPoint, databaseName);
                 return new Lifetime<Database>(db, s_ReturnToDatabasePool, this);
             }
