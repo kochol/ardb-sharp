@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Collections.Concurrent;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace ArdbSharp
@@ -6,6 +7,8 @@ namespace ArdbSharp
     public class FireAndForget
     {
         public Connection MainConnection;
+        
+        private ConcurrentBag<Task> _tasks = new ConcurrentBag<Task>();
 
         private async ValueTask ExecuteAsync(string databaseName, string cmd, object arg)
         {
@@ -15,7 +18,7 @@ namespace ArdbSharp
 
         public void Execute(string databaseName, string cmd, object arg)
         {
-            Task.Run(() => ExecuteAsync(databaseName, cmd, arg));
+            _tasks.Add(Task.Run(() => ExecuteAsync(databaseName, cmd, arg)));
         }
 
         private async ValueTask HashDeleteAsync(string databaseName, object key, object field)
@@ -26,7 +29,7 @@ namespace ArdbSharp
 
         public void HashDelete(string databaseName, object key, object field)
         {
-            Task.Run(() => HashDeleteAsync(databaseName, key, field));
+            _tasks.Add(Task.Run(() => HashDeleteAsync(databaseName, key, field)));
         }
 
         private async ValueTask HashIncrementAsync(string databaseName, object key, object field, long value)
@@ -37,7 +40,7 @@ namespace ArdbSharp
 
         public void HashIncrement(string databaseName, object key, object field, long value)
         {
-            Task.Run(() => HashIncrementAsync(databaseName, key, field, value));
+            _tasks.Add(Task.Run(() => HashIncrementAsync(databaseName, key, field, value)));
         }
        
         private async ValueTask HashSetAsync(string databaseName, object key, params object[] fieldsAndValues)
@@ -48,7 +51,7 @@ namespace ArdbSharp
 
         public void HashSet(string databaseName, object key, params object[] fieldsAndValues)
         {
-            Task.Run(() => HashSetAsync(databaseName, key, fieldsAndValues));
+            _tasks.Add(Task.Run(() => HashSetAsync(databaseName, key, fieldsAndValues)));
         }
 
         private async ValueTask KeyDeleteAsync(string databaseName, object key)
@@ -59,7 +62,7 @@ namespace ArdbSharp
 
         public void KeyDelete(string databaseName, object key)
         {
-            Task.Run(() => KeyDeleteAsync(databaseName, key));
+            _tasks.Add(Task.Run(() => KeyDeleteAsync(databaseName, key)));
         }
 
         private async ValueTask ListLeftPushAsync(string databaseName, object key, object value)
@@ -70,7 +73,7 @@ namespace ArdbSharp
 
         public void ListLeftPush(string databaseName, object key, object value)
         {
-            Task.Run(() => ListLeftPushAsync(databaseName, key, value));
+            _tasks.Add(Task.Run(() => ListLeftPushAsync(databaseName, key, value)));
         }
 
         private async ValueTask ListRightPushAsync(string databaseName, object key, object value)
@@ -81,7 +84,7 @@ namespace ArdbSharp
 
         public void ListRightPush(string databaseName, object key, object value)
         {
-            Task.Run(() => ListRightPushAsync(databaseName, key, value));
+            _tasks.Add(Task.Run(() => ListRightPushAsync(databaseName, key, value)));
         }
 
         private async ValueTask ListRemoveAsync(string databaseName, object key, long count, object element)
@@ -92,7 +95,7 @@ namespace ArdbSharp
 
         public void ListRemove(string databaseName, object key, long count, object element)
         {
-            Task.Run(() => ListRemoveAsync(databaseName, key, count, element));
+            _tasks.Add(Task.Run(() => ListRemoveAsync(databaseName, key, count, element)));
         }
 
         private async ValueTask ListTrimAsync(string databaseName, object key, long start, long stop)
@@ -103,7 +106,7 @@ namespace ArdbSharp
 
         public void ListTrim(string databaseName, object key, long start, long stop)
         {
-            Task.Run(() => ListTrimAsync(databaseName, key, start, stop));
+            _tasks.Add(Task.Run(() => ListTrimAsync(databaseName, key, start, stop)));
         }
 
         private async ValueTask SortedSetAddAsync(string databaseName, object key, object member, double score)
@@ -114,7 +117,7 @@ namespace ArdbSharp
 
         public void SortedSetAdd(string databaseName, object key, object member, double score)
         {
-            Task.Run(() => SortedSetAddAsync(databaseName, key, member, score));
+            _tasks.Add(Task.Run(() => SortedSetAddAsync(databaseName, key, member, score)));
         }
 
         private async ValueTask StringAppendAsync(string databaseName, object key, object value)
@@ -125,7 +128,7 @@ namespace ArdbSharp
 
         public void StringAppend(string databaseName, object key, object value)
         {
-            Task.Run(() => StringAppendAsync(databaseName, key, value));
+            _tasks.Add(Task.Run(() => StringAppendAsync(databaseName, key, value)));
         }
 
         private async ValueTask StringSetAsync(string databaseName, object key, object value)
@@ -136,7 +139,7 @@ namespace ArdbSharp
 
         public void StringSet(string databaseName, object key, object value)
         {
-            Task.Run(() => StringSetAsync(databaseName, key, value));
+            _tasks.Add(Task.Run(() => StringSetAsync(databaseName, key, value)));
         }
 
         private async ValueTask StringSetAsync(string databaseName, object key, object value, int ExpireSeconds)
@@ -147,8 +150,13 @@ namespace ArdbSharp
 
         public void StringSet(string databaseName, object key, object value, int ExpireSeconds)
         {
-            Task.Run(() => StringSetAsync(databaseName, key, value, ExpireSeconds));
+            _tasks.Add(Task.Run(() => StringSetAsync(databaseName, key, value, ExpireSeconds)));
         }
 
+        public void WaitForTasks()
+        {
+            Task.WaitAll(_tasks.ToArray());
+            _tasks.Clear();
+        }
     }
 }
